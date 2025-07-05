@@ -478,7 +478,7 @@ class AlwaysOnCustomView : View {
                 override fun run() {
                     invalidate()
                     val currentMinute = System.currentTimeMillis() / 60000
-                    if (currentMinute % 60 == 0) { // Fetch weather data every hour
+                    if (currentMinute % 60 == 0L) { // Fetch weather data every hour
                         prepareWeather()
                     }
                     updateHandler.postDelayed(this, UPDATE_DELAY)
