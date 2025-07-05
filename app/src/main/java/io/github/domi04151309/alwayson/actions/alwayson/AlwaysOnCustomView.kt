@@ -48,6 +48,9 @@ class AlwaysOnCustomView : View {
     private var events = listOf<String>()
     private var weather = ""
 
+    private val weatherUpdateHandler = Handler(Looper.getMainLooper())
+    private val WEATHER_UPDATE_DELAY: Long = 3_600_000 // 1 hour in milliseconds
+
     var musicVisible: Boolean = false
         set(value) {
             field = value
@@ -214,21 +217,42 @@ class AlwaysOnCustomView : View {
 
     private fun prepareWeather() {
         if (utils.prefs.get(P.SHOW_WEATHER, P.SHOW_WEATHER_DEFAULT)) {
-            Volley.newRequestQueue(context)
-                .add(
-                    StringRequest(
-                        Request.Method.GET,
-                        utils.prefs.getWeatherUrl(),
-                        { response ->
-                            weather = response
-                            invalidate()
-                        },
-                        {
-                            Log.e(Global.LOG_TAG, it.toString())
-                        },
-                    ),
-                )
+            refreshWeather()
+            startWeatherUpdateHandler()
         }
+    }
+
+    private fun refreshWeather() {
+        Volley.newRequestQueue(context)
+            .add(
+                StringRequest(
+                    Request.Method.GET,
+                    utils.prefs.getWeatherUrl(),
+                    { response ->
+                        weather = response
+                        invalidate()
+                    },
+                    {
+                        Log.e(Global.LOG_TAG, it.toString())
+                    },
+                ),
+            )
+    }
+
+    private fun startWeatherUpdateHandler() {
+        weatherUpdateHandler.postDelayed(
+            object : Runnable {
+                override fun run() {
+                    refreshWeather()
+                    weatherUpdateHandler.postDelayed(this, WEATHER_UPDATE_DELAY)
+                }
+            },
+            WEATHER_UPDATE_DELAY,
+        )
+    }
+
+    fun stopWeatherUpdateHandler() {
+        weatherUpdateHandler.removeCallbacksAndMessages(null)
     }
 
     private fun init(context: Context) {
@@ -407,7 +431,7 @@ class AlwaysOnCustomView : View {
 
         // Weather
         if (utils.prefs.get(P.SHOW_WEATHER, P.SHOW_WEATHER_DEFAULT)) {
-            Weather.draw(canvas, utils, weather)
+            Weather.draw(canvas, utils, weather) // Ensure latest weather data is drawn
         }
 
         // Notification Count
@@ -486,6 +510,7 @@ class AlwaysOnCustomView : View {
 
     fun stopClockHandler() {
         updateHandler.removeCallbacksAndMessages(null)
+        stopWeatherUpdateHandler() // Ensure weather updates are stopped as well
     }
 
     companion object {
