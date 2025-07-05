@@ -49,7 +49,7 @@ class AlwaysOnCustomView : View {
     private var weather = ""
 
     private val weatherUpdateHandler = Handler(Looper.getMainLooper())
-    private val WEATHER_UPDATE_DELAY: Long = 3_600_000 // 1 hour in milliseconds
+    private val WEATHER_UPDATE_DELAY: Long = 3_600 // 1 hour in milliseconds
 
     var musicVisible: Boolean = false
         set(value) {
