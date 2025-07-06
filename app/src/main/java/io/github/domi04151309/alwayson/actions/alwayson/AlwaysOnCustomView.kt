@@ -220,7 +220,7 @@ class AlwaysOnCustomView : View {
                         Request.Method.GET,
                         utils.prefs.getWeatherUrl(),
                         { response ->
-                            weather = response
+                            weather = response.replace("+", "")
                             invalidate()
                         },
                         {
