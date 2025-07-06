@@ -337,7 +337,7 @@ class AlwaysOnCustomView : View {
             } else {
                 measuredWidth / 2f
             }
-        utils.viewHeight = 0f
+        utils.viewHeight = 100f
     }
 
     @Suppress("CyclomaticComplexMethod")
