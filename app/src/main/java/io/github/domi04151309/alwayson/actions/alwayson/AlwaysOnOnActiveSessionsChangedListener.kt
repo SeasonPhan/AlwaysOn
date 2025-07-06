@@ -56,7 +56,7 @@ class AlwaysOnOnActiveSessionsChangedListener(
                 title == "" -> view.musicString = artist
                 else ->
                     view.musicString =
-                        view.resources.getString(R.string.music, artist, title)
+                        title
             }
         } else {
             view.musicVisible = false
@@ -64,6 +64,6 @@ class AlwaysOnOnActiveSessionsChangedListener(
     }
 
     companion object {
-        private const val MAX_STRING_LENGTH = 20
+        private const val MAX_STRING_LENGTH = 30
     }
 }
